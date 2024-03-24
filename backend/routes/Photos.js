@@ -1,0 +1,15 @@
+const express=require("express")
+const photoroute=express.Router();
+const upload=require("../middlewares/photomiddleware")
+const {fileUpload,postUpload,likeController,likedecementController,commentsController,fetchAllpost,userposts,commentsgetControllers,postDelete}=require("../controllers/photoControl")
+const isLogin=require("../middlewares/Authmiddleware")
+photoroute.post("/upload",isLogin,upload.single('file'),fileUpload)
+photoroute.post("/uploadpost",isLogin,postUpload)
+photoroute.post("/deletepost/:id",isLogin,postDelete)
+photoroute.post("/likeofpost/:id",isLogin,likeController)
+photoroute.post("/commentonpost/:id",isLogin,commentsController)
+photoroute.get("/comment/:id",commentsgetControllers)
+photoroute.post("/decrementoflikeofpost/:id",isLogin,likedecementController)
+photoroute.get("/allposts",fetchAllpost)
+photoroute.get("/userposts",isLogin,userposts)
+module.exports=photoroute
