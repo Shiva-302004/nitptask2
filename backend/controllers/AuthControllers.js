@@ -49,9 +49,10 @@ const logincontroller=async(req,res)=>{
 const signupcontroller=async(req,res)=>{
     try{
         const {name,email,password}=req.body
-        if(!name) return res.send("name field is required")
-        if(!password) return res.send("password is required")
-        if(!email) return  res.send("email is required")
+        console.log(name,email,password)
+        if(!name) return res.json({msg:"name field is required"})
+        if(!password) return res.json({msg:"password field is required"})
+        if(!email) return  res.json({msg:"email field is required"})
         if(!validator.isEmail(email)){
            return  res.status(400).json({
                 msg:"enter a valid email ",

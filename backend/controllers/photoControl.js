@@ -29,7 +29,8 @@ const postUpload = async (req, res) => {
     if (!title) return res.status(400).send("title is required")
     if (!photo) return res.status(400).send("photo is required")
     try {
-        const dummydata = new postmodel({ title, photo, username: id })
+        const newdata=await user.findOne({_id:id})
+        const dummydata = new postmodel({ title, photo, username: id,name:newdata.name })
         const data = await dummydata.save()
         return res.status(200).json({
             msg:"post uploaded successfully",
