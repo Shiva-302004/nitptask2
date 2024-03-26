@@ -1,8 +1,11 @@
 import React from 'react'
+import Allpost from './Allpost'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <div>
+      <Allpost/>
+    </div>
   )
 }
 

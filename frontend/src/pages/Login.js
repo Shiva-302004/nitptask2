@@ -16,24 +16,26 @@ const Login = () => {
     }
     const HandleClick = async () => {
         if (!((login.password.length !== 0) && (login.email.length !== 0))) {
-            return alert(" email password is required cant be empty")
+            toast.error("this field cantnot be empty")
+        }else{
+            fetch(`${api}/api/v1/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(login)
+            }).then(res => res.json()).then((data) => {
+                if (data.sucess) {
+                    localStorage.setItem("token", data.token)
+                    localStorage.setItem("id",data.data._id)
+                    toast.success(data.msg)
+                    location("/")
+                    window.location.reload()
+                } else {
+                    toast.error(data.msg)
+                }
+            })
         }
-        fetch(`${api}/api/v1/auth/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(login)
-        }).then(res => res.json()).then((data) => {
-            if (data.sucess) {
-                localStorage.setItem("token", data.token)
-                toast.success(data.msg)
-                location("/")
-                window.location.reload()
-            } else {
-                toast.error(data.msg)
-            }
-        })
     }
     return (
         <div className='flex justify-center items-center h-[100vh] w-[100vw]'>

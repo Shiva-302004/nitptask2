@@ -25,7 +25,7 @@ const Navbar = () => {
                     <div className='flex flex-col justify-center items-center '>
                         <Link className='mt-8 text-2xl' to="/" onClick={() => setclick(!click)}>Home</Link>
                         <Link className='mt-8 text-2xl' to="/myposts" onClick={() => setclick(!click)}>My Posts</Link>
-                        <Link className='mt-8 text-2xl' to="/allposts" onClick={() => setclick(!click)}>All posts</Link>
+                        {/* <Link className='mt-8 text-2xl' to="/allposts" onClick={() => setclick(!click)}>All posts</Link> */}
                         {
                             !localStorage.getItem("token")?
                             <>
@@ -46,10 +46,9 @@ const Navbar = () => {
                     <div className='flex text-white '>
                         <Link className='text-md md:text-lg px-2' to="/" >Home</Link>
                         <Link className='text-md md:text-lg px-2' to="/myposts" >My Posts</Link>
-                        <Link className='text-md md:text-lg px-2' to="/allposts" >All posts</Link>
                     </div>
                     <div className='flex text-white '>
-                        <Link className={`text-md md:text-xl px-2 bg-white text-black rounded-full font-bold ${localStorage.getItem("token")?"block":"hidden"} `} to="/login" onClick={() => { localStorage.removeItem("token");location("/login");window.location.reload() }} >Logout</Link>
+                        <Link className={`text-md md:text-xl px-2 bg-white text-black rounded-full font-bold ${localStorage.getItem("token")?"block":"hidden"} `} to="/login" onClick={() => { localStorage.removeItem("token");localStorage.removeItem("id");location("/login");window.location.reload() }} >Logout</Link>
                         <Link className={`text-md md:text-xl px-2 bg-white text-black rounded-full font-bold ${!localStorage.getItem("token")?"block":"hidden"} `} to="/login" >Login</Link>
                         <Link className={`text-md md:text-xl px-2 bg-white text-black rounded-full font-bold ${!localStorage.getItem("token")?"block":"hidden"} ml-3`} to="/signup" >Signup</Link>
                     </div>

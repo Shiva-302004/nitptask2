@@ -30,7 +30,7 @@ const postUpload = async (req, res) => {
     if (!photo) return res.status(400).send("photo is required")
     try {
         const newdata=await user.findOne({_id:id})
-        const dummydata = new postmodel({ title, photo, username: id,name:newdata.name })
+        const dummydata = new postmodel({ title, photo, username: id,name:newdata.name ,likes:[]})
         const data = await dummydata.save()
         return res.status(200).json({
             msg:"post uploaded successfully",
@@ -45,13 +45,15 @@ const postUpload = async (req, res) => {
     }
 }
 const postDelete = async (req, res) => {
-    const id = req.user.id
     try {
-        const data=await postmodel.findByIdAndDelete(req.params.id)
+        const {id}=req.params
+        console.log(id)
+        const data=await postmodel.deleteOne({_id:id})
+        const dataa=await postmodel.find({username:req.user.id})
         return res.status(200).json({
             msg:"post deleted sucessfully",
             sucess:true,
-            data:data
+            data:dataa
         })
     } catch (err) {
         return res.status(400).json({
@@ -61,37 +63,34 @@ const postDelete = async (req, res) => {
     }
 }
 const likeController=async(req,res)=>{
-    const id=req.params.id
+    const {id}=req.params
     if(!req.user.id) return res.status(400).json({msg:"please login to avail this facility"})
     const data=await postmodel.findById(id)
-    const like=data.likes
-    const newdata=await postmodel.findByIdAndUpdate(id,{likes:like+1},{new:true})
+    const newdata=await postmodel.findByIdAndUpdate(id,{$push:{likes:req.user.id}},{new:true})
     return res.status(200).json({
         data:newdata,
         success:true
     })
 }
 const likedecementController=async(req,res)=>{
-    const id=req.params.id
+    const {id}=req.params
     if(!req.user.id) return res.status(400).json({msg:"please login to avail this facility"})
-    const data=await postmodel.findById(id)
-    const like=data.likes
-    if(like===0) return res.status(400).json({msg:"no likes on this post yet"})
-    const newdata=await postmodel.findByIdAndUpdate(id,{likes:like-1},{new:true})
+    const data=await postmodel.findByIdAndUpdate(id,{$pull:{likes:req.user.id}},{new:true})
     return res.status(200).json({
-        data:newdata,
-        success:true
+        msg:"you have sucessfully liked the post",
+        data:data,
+        length:data?.length
     })
 }
 const commentsController=async(req,res)=>{
-    const id=req.params.id
+    const {id}=req.params
     const {title}=req.body
     if(!req.user.id) return res.status(400).json({msg:"please login to avail this facility"})
     const use=await user.findOne({_id:req.user.id})
-    const data=await postmodel.findByIdAndUpdate(id,{$push:{"comments":{title,userid:use.name}}},{new:true})
+    const data=await postmodel.findByIdAndUpdate({_id:id},{$push:{"comments":{title,userid:use.name}}},{new:true})
     return res.status(200).json({
         success:true,
-        data:data.comments
+        data:data
     })
 }
 const fetchAllpost=async(req,res)=>{
@@ -109,9 +108,10 @@ const userposts=async(req,res)=>{
     })
 }
 const commentsgetControllers=async(req,res)=>{
-    const data=await postmodel.findById(req.params.id)
+    const {id}=req.params
+    const data=await postmodel.findById(id)
     return res.status(200).json({
-        data:data.comments,
+        data:data,
         success:true
     })
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {toast} from "react-toastify"
 const defaultState = {
     email: "",
@@ -9,30 +9,34 @@ const defaultState = {
 const api=process.env.REACT_APP_SERVER
 const Signup = () => {
     const [login, setlogin] = useState(defaultState)
-    
+    const location=useNavigate()
     const HandleChange = (e) => {
         setlogin({ ...login, [e.target.name]: e.target.value })
         console.log(login)
     }
     const handleClick=async()=>{
         if(!((login.name.length!==0)&&(login.password.length!==0)&&(login.email.length!==0))){
-           return alert("name email password is required cant be empty")
+           toast.error("this field cant be empty")
+        }else{
+
+            fetch(`${api}/api/v1/auth/signup`,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(login)
+            }).then(res=>res.json()).then((data)=>{
+                if(data.success){
+                    localStorage.setItem("token",data.token)
+                    localStorage.setItem("id",data.data._id)
+                    location("/")
+                    window.location.reload()
+                    toast.success(data.msg)
+                }else{
+                    toast.error(data.msg)
+                }
+            })
         }
-        fetch(`${api}/api/v1/auth/signup`,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify(login)
-        }).then(res=>res.json()).then((data)=>{
-            if(data.success){
-                localStorage.setItem("token",data.token)
-                window.location.reload()
-                toast.success(data.msg)
-            }else{
-                toast.error(data.msg)
-            }
-        })
     }
     return (
         <div className='flex justify-center items-center h-[100vh] w-[100vw]' >
